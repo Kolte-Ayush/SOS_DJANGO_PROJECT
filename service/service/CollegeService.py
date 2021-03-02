@@ -11,11 +11,12 @@ It contains Role business logics.
 class CollegeService(BaseService):
 
     def search(self, params):
+
         pageNo = (params["pageNo"] - 1) * self.pageSize
         sql = "select * from sos_college where 1=1"
         val = params.get("collegeName", None)
         if DataValidator.isNotNull(val):
-            sql += " and collegeName = '" + val + " ' "
+            sql += " and collegeName = '" + val + "' "
         sql += " limit %s,%s"
         cursor = connection.cursor()
         cursor.execute(sql, [pageNo, self.pageSize])

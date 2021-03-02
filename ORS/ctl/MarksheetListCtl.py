@@ -75,7 +75,6 @@ class MarksheetListCtl(BaseCtl):
                         record = self.get_service().search(self.form)
                         self.page_list = record["data"]
                         self.form["pageNo"] = 1
-
                         self.form["error"] = False
                         self.form["message"] = "DATA IS SUCCESSFULLY DELETED"
 

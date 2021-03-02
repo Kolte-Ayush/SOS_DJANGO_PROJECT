@@ -8,7 +8,6 @@ class BaseService(ABC):
     def get(self, pk):
         try:
             m = self.get_model().objects.get(id=pk)
-
             return m
         except self.get_model().DoesNotExist:
             return None

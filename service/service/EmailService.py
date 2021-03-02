@@ -32,14 +32,17 @@ class EmailService:
         elif (sendingMail == "forgotPassword"):
             text = EmailBuilder.forgot_password(user)
             email = EmailMessage(msg.subject, text, msg.frm, msg.to)
-
             email.content_subtype = "html"
+            try:
+                res = email.send()
+            except Exception as e:
+                res = e
+            return res
 
         elif (sendingMail == "updateprofile"):
             text = EmailBuilder.update_profile(user)
             email = EmailMessage(msg.subject, text, msg.frm, msg.to)
             email.content_subtype = "html"
-
             try:
                 res = email.send()
             except Exception as e:

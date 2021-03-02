@@ -79,7 +79,6 @@ def actionId(request, page="", operation="", id=0):
 
     else:
         res = redirect("/ORS/Login")
-
     return res
 
 

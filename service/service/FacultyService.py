@@ -12,9 +12,9 @@ class FacultyService(BaseService):
     def search(self, params):
         pageNo = (params["pageNo"] - 1) * self.pageSize
         sql = "select * from sos_faculty where 1=1"
-        val = params.get("firstName", None)
+        val = params.get("email", None)
         if DataValidator.isNotNull(val):
-            sql += " and firstName = '" + val + " ' "
+            sql += " and email = '" + val + " ' "
         sql += " limit %s,%s"
         cursor = connection.cursor()
 

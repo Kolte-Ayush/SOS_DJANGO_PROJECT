@@ -15,7 +15,7 @@ class UserService(BaseService):
         userList = self.get_model().objects.filter()
         if userList.count() > 0:
             for userData in userList:
-                if params['login_id'] == userData.login_id:
+                if params['login_id'] == userData.login_id and params['password'] == userData.password:
                     return userData
         else:
             return None
@@ -29,7 +29,6 @@ class UserService(BaseService):
             sql += " and login_id = '" + val + " ' "
         sql += " limit %s,%s"
         cursor = connection.cursor()
-
         cursor.execute(sql, [pageNo, self.pageSize])
         result = cursor.fetchall()
         columnName = (
@@ -49,9 +48,7 @@ class UserService(BaseService):
             q = q.filter(login_id=login)
         return q
 
-    def escape(self, user):
-        page_list = self.get_model().objects.exclude(login_id=user.login_id)
-        return page_list
+
 
     def get_model(self):
         return User

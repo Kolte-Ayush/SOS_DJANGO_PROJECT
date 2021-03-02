@@ -14,7 +14,7 @@ class WelcomeCtl(BaseCtl):
         request.session["login_id"] = user.login_id
 
         if user:
-            self.form["message"] = "Welcome to" +" " + user.role_Name
+            self.form["message"] = "Welcome to" + " " + user.role_Name
         return render(request, self.get_template(), {"form": self.form})
 
     def submit(self, request, params={}):

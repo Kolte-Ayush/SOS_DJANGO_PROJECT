@@ -1,23 +1,18 @@
-
-
-
-
-
-
-
 from django.http import HttpResponse
 from .BaseCtl import BaseCtl
 from django.shortcuts import render
 from ORSAPI.utility.DataValidator import DataValidator
 from service.models import College
 from service.forms import CollegeForm
-from service.service.CollegeService import CollegeService 
+from service.service.CollegeService import CollegeService
 from django.http.response import JsonResponse
 import json
-# from django.core import serializers   
 
-class CollegeCtl(BaseCtl): 
-    
+
+# from django.core import serializers
+
+class CollegeCtl(BaseCtl):
+
     def request_to_form(self, requestForm):
         print("orsapi college request to form is run")
         self.form["id"] = requestForm["id"]
@@ -27,86 +22,92 @@ class CollegeCtl(BaseCtl):
         self.form["collegeCity"] = requestForm["collegeCity"]
         self.form["collegePhoneNumber"] = requestForm["collegePhoneNumber"]
 
-    def get(self,request, params = {}):
+    def get(self, request, params={}):
         print("orsapi college get is run")
-        service=CollegeService()
-        c=service.get(params["id"])
-        res={}
-        if(c!=None):
-            res["data"]=c.to_json()
-            res["error"]=False
-            res["message"]="Data is found"
+        params['pageNo'] = 1
+        service = CollegeService()
+        if params['id'] > 0:
+            c = service.get(params["id"])
+            c = c.to_json()
         else:
-            res["error"]=True
-            res["message"]="record not found"
-        return JsonResponse({"data":res["data"]})
+            c = service.search(params)
+        res = {}
+        if (c != None):
+            res["data"] = c
+            res["error"] = False
+            res["message"] = "Data is found"
+        else:
+            res["error"] = True
+            res["message"] = "record not found"
+        return JsonResponse({"data": res["data"]})
 
-    def delete(self,request, params = {}):
+    def delete(self, request, params={}):
         print("orsapi college delete is run")
-        service=CollegeService()
-        c=service.get(params["id"])
-        res={}
-        if(c!=None): 
+        service = CollegeService()
+        c = service.get(params["id"])
+        res = {}
+        if (c != None):
             service.delete(params["id"])
-            res["data"]=c.to_json()
-            res["error"]=False
-            res["message"]="Data is Successfully deleted"
+            res["data"] = c.to_json()
+            res["error"] = False
+            res["message"] = "Data is Successfully deleted"
         else:
-            res["error"]=True
-            res["message"]="Data is not deleted"
-        return JsonResponse({"data":res})
-   
-    def search(self,request, params = {}):
+            res["error"] = True
+            res["message"] = "Data is not deleted"
+        return JsonResponse({"data": res})
+
+    def search(self, request, params={}):
+        params['pageNo'] = 1
         print("orsapi college search is run")
-        json_request=json.loads(request.body)
-        if(json_request):
-            params["collegeName"]=json_request.get("collegeName",None)
-        service=CollegeService()
-        c=service.search(params)
-        res={}
-        data=[]
+        json_request = json.loads(request.body)
+        if (json_request):
+            params["collegeName"] = json_request.get("collegeName", None)
+        service = CollegeService()
+        c = service.search(params)
+        print(c)
+        res = {}
+        data = []
         for x in c:
-            data.append(x.to_json())
-        if(c!=None):
-            res["data"]=data
-            res["error"]=False
-            res["message"]="Data is found"
+            data.append(c)
+        if (c != None):
+            res["data"] = data
+            res["error"] = False
+            res["message"] = "Data is found"
         else:
-            res["error"]=True
-            res["message"]="record not found"
-        return JsonResponse({"data":res})
+            res["error"] = True
+            res["message"] = "record not found"
+        return JsonResponse({"data": res})
 
-
-    def form_to_model(self,obj,request):
+    def form_to_model(self, obj, request):
         print("orsapi college form to model is run")
         pk = int(request["id"])
-        if(pk>0):
+        if (pk > 0):
             obj.id = pk
         obj.collegeName = request["collegeName"]
         obj.collegeAddress = request["collegeAddress"]
-        obj.collegeState=request["collegeState"] 
-        obj.collegeCity=request["collegeCity"] 
-        obj.collegePhoneNumber=request["collegePhoneNumber"]  
+        obj.collegeState = request["collegeState"]
+        obj.collegeCity = request["collegeCity"]
+        obj.collegePhoneNumber = request["collegePhoneNumber"]
         return obj
 
-    def save(self,request, params = {}):
-        print("orsapi college save is run")      
-        json_request=json.loads(request.body)
+    def save(self, request, params={}):
+        print("orsapi college save is run")
+        json_request = json.loads(request.body)
         self.request_to_form(json_request)
-        res={}
-        if(self.input_validation()):
-            res["error"]=True
-            res["message"]=""
+        res = {}
+        if (self.input_validation()):
+            res["error"] = True
+            res["message"] = ""
         else:
-            r=self.form_to_model(College(), json_request)
-            service=CollegeService()
-            c=service.save(r)
-            
-            if(r!=None):
-                res["data"]=r.to_json()
-                res["error"]=False
-                res["message"]="Data is Successfully saved"    
-        return JsonResponse({"data":res,'form':self.form})
+            r = self.form_to_model(College(), json_request)
+            service = CollegeService()
+            c = service.save(r)
+
+            if (r != None):
+                res["data"] = r.to_json()
+                res["error"] = False
+                res["message"] = "Data is Successfully saved"
+        return JsonResponse({"data": res, 'form': self.form})
 
     def input_validation(self):
         inputError = self.form["inputError"]
@@ -132,14 +133,8 @@ class CollegeCtl(BaseCtl):
 
     # Template html of Role page    
     def get_template(self):
-        return "orsapi/College.html"          
+        return "orsapi/College.html"
 
-    # Service of Role     
+    # Service of Role
     def get_service(self):
-        return CollegeService()        
-
-    
-       
-
-
-
+        return CollegeService()

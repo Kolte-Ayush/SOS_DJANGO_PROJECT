@@ -24,6 +24,7 @@ class BaseCtl(ABC):
         self.form["inputError"] = {}
         self.form["data"] = {}
         self.form["sessionKey"] = ""
+        self.form["pageNo"] = 1
 
     '''
     It loads preload data of the page 

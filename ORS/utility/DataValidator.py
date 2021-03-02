@@ -36,7 +36,7 @@ class DataValidator:
 
     @classmethod
     def isaplhacheck(self, val):
-        if re.match('[a-zA-Z\s]+$', val):
+        if re.match('[a-zA-Z\s()]+$', val):
             return False
         else:
             return True

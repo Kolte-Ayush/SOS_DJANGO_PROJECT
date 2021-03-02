@@ -25,7 +25,7 @@ class CollegeCtl(BaseCtl):
     def model_to_form(self, obj):
         if (obj == None):
             return
-        print("model to form")
+
         self.form["id"] = obj.id
         self.form["collegeName"] = obj.collegeName
         self.form["collegeAddress"] = obj.collegeAddress
@@ -38,7 +38,6 @@ class CollegeCtl(BaseCtl):
         pk = int(self.form["id"])
         if (pk > 0):
             obj.id = pk
-        print("form to model")
         obj.collegeName = self.form["collegeName"]
         obj.collegeAddress = self.form["collegeAddress"]
         obj.collegeState = self.form["collegeState"]
@@ -91,6 +90,7 @@ class CollegeCtl(BaseCtl):
         # Display College page
 
     def display(self, request, params={}):
+
         if (params["id"] > 0):
             r = self.get_service().get(params["id"])
             self.model_to_form(r)

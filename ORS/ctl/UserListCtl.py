@@ -14,10 +14,6 @@ class UserListCtl(BaseCtl):
         self.form["firstName"] = requestForm.get("firstName", None)
         self.form["lastName"] = requestForm.get("lastName", None)
         self.form["login_id"] = requestForm.get("login_id", None)
-        self.form["next"] = requestForm.get("next", None)
-        self.form["pageNo"] = requestForm.get("pageNo", None)
-        self.form["previous"] = requestForm.get("previous", None)
-        self.form["goto"] = requestForm.get("goto", None)
         self.form["ids"] = requestForm.getlist("ids", None)
 
     def display(self, request, params={}):
@@ -27,7 +23,6 @@ class UserListCtl(BaseCtl):
         return res
 
     def next(self, request, params={}):
-        user = request.session.get('user', None)
         UserListCtl.count += 1
         self.form["pageNo"] = UserListCtl.count
         record = self.get_service().search(self.form)

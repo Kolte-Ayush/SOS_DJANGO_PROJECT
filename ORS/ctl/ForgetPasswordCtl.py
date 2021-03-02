@@ -62,4 +62,4 @@ class ForgetPasswordCtl(BaseCtl):
         # Service of Role
 
     def get_service(self):
-        return ForgetPasswordService()
+        return UserService()
