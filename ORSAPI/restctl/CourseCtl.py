@@ -49,10 +49,9 @@ class CourseCtl(BaseCtl):
             res["message"]="Data is not deleted"
         return JsonResponse({"data":res["data"]})
 
-    
-
     def search(self,request, params = {}):
-        json_request=json.loads(request.body)
+        json_request = json.loads(request.body)
+        params['pageNo'] = 1
         if(json_request):
             params["courseName"]=json_request.get("courseName",None)
         service=CourseService()
@@ -60,7 +59,7 @@ class CourseCtl(BaseCtl):
         res={}
         data=[]
         for x in c:
-            data.append(x.to_json())
+            data.append(c)
         if(c!=None):
             res["data"]=data
             res["error"]=False

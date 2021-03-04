@@ -61,6 +61,8 @@ class CollegeListCtl(BaseCtl):
         if (bool(self.form["ids"]) == False):
             self.form["error"] = True
             self.form["message"] = "Please Select at least one check box"
+            record = self.get_service().search(self.form)
+            self.page_list = record["data"]
             return render(request, self.get_template(), {"pageList": self.page_list, "form": self.form})
         else:
             for ids in self.form["ids"]:

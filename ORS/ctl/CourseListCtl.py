@@ -57,7 +57,8 @@ class CourseListCtl(BaseCtl):
         CourseListCtl.count += 1
         self.form["pageNo"] = 1
         if (bool(self.form["ids"]) == False):
-
+            record = self.get_service().search(self.form)
+            self.page_list = record["data"]
             self.form["error"] = True
             self.form["message"] = "Please Select at least one check box"
             return render(request, self.get_template(), {"pageList": self.page_list, "form": self.form})

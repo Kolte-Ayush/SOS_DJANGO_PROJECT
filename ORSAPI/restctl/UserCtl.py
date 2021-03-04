@@ -44,16 +44,16 @@ class UserCtl(BaseCtl):
         return JsonResponse({"data":res["data"]})
 
     def search(self,request, params = {}):
+        params['pageNo'] = 1
         json_request=json.loads(request.body)
         if(json_request):
             params["login_id"]=json_request.get("login_id",None)
-        
         service=UserService()
         c=service.search(params)
         res={}
         data=[]
         for x in c:
-            data.append(x.to_json())
+            data.append(c)
         if(c!=None):
             res["data"]=data
             res["error"]=False

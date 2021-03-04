@@ -154,7 +154,6 @@ class RegistrationCtl(BaseCtl):
 
     # Submit Role page
     def submit(self, request, params={}):
-
         duplicate = self.get_service().get_login_id(self.form["login_id"])
 
         if (duplicate.count() > 0):

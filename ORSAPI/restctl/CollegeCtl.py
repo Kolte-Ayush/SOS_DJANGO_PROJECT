@@ -64,7 +64,6 @@ class CollegeCtl(BaseCtl):
             params["collegeName"] = json_request.get("collegeName", None)
         service = CollegeService()
         c = service.search(params)
-        print(c)
         res = {}
         data = []
         for x in c:
