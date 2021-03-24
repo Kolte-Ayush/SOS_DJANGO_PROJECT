@@ -3,6 +3,10 @@
 
 
 from django.http import HttpResponse
+
+from service.service.CollegeService import CollegeService
+from service.service.CourseService import CourseService
+from service.service.SubjectService import SubjectService
 from .BaseCtl import BaseCtl
 from django.shortcuts import render
 from ORSAPI.utility.DataValidator import DataValidator
@@ -14,19 +18,23 @@ import json
 from django.core import serializers   
 
 class FacultyCtl(BaseCtl): 
-    # def preload(self,request,params={}):
-    #     print("tt preload is run")
-    #     self.data = CourseService().search(self.form)
-    #     courseList=CourseService().search(self.form)
-    #     subjectList = SubjectService().search(self.form)
-    #     coursedata=[]
-    #     for x in courseList:
-    #         coursedata.append(x.to_json())
-    #     subpreload=[]
-    #     for y in subjectList:
-    #         subpreload.append(y.to_json())  
-    #     return JsonResponse({"subpreload":subpreload,"coursedata":coursedata})
-    
+    def preload(self,request,params={}):
+        print("tt preload is run")
+
+        courseList=CourseService().preload(self.form)
+        subjectList = SubjectService().preload(self.form)
+        collegeList = CollegeService().preload(self.form)
+        coursedata=[]
+        subpreload = []
+        collegeload = []
+        for x in courseList:
+            coursedata.append(x.to_json())
+        for y in subjectList:
+            subpreload.append(y.to_json())
+        for z in collegeList:
+            collegeload.append(z.to_json())
+        return JsonResponse({"subpreload": subpreload,"coursedata": coursedata, "collegeload": collegeload})
+
     def request_to_form(self, requestForm):
         self.form["id"] = requestForm["id"]
         self.form["firstName"] = requestForm["firstName"]
@@ -39,9 +47,7 @@ class FacultyCtl(BaseCtl):
         self.form["college_ID"] = requestForm["college_ID"]
         self.form["subject_ID"] = requestForm["subject_ID"]
         self.form["course_ID"] = requestForm["course_ID"]
-        # self.form["collegeName"] = requestForm["collegeName"]
-        self.form["subjectName"] = requestForm["subjectName"]
-        self.form["courseName"] = requestForm["courseName"]
+
         
 
     def get(self,request, params = {}):
@@ -75,17 +81,27 @@ class FacultyCtl(BaseCtl):
     def search(self,request, params = {}):
         print("faculty search is found")
         json_request=json.loads(request.body)
+        courseList = CourseService().preload(self.form)
+        subject_List = SubjectService().preload(self.form)
+        college_List = CollegeService().preload(self.form)
         if(json_request):
-            params["collegeName"]=json_request.get("collegeName",None)
-            params["courseName"]=json_request.get("courseName",None)
+            params["email"]=json_request.get("email",None)
+            params["pageNo"]=json_request.get("pageNo",None)
         service=FacultyService()
         c=service.search(params)
         res={}
-        data=[]
-        for x in c:
-            data.append(x.to_json())
         if(c!=None):
-            res["data"]=data
+            for x in c['data']:
+                for y in courseList:
+                    if x.get("course_ID") == y.id:
+                        x['courseName'] = y.courseName
+                for z in subject_List:
+                    if x.get('subject_ID') == z.id:
+                        x['subjectName'] = z.subjectName
+                for cl in college_List:
+                    if x.get('college_ID') == cl.id:
+                        x['collegeName'] = cl.collegeName
+            res["data"] = c['data']
             res["error"]=False
             res["message"]="Data is found"
         else:
@@ -107,9 +123,7 @@ class FacultyCtl(BaseCtl):
         obj.college_ID=request["college_ID"]  
         obj.subject_ID=request["subject_ID"]  
         obj.course_ID=request["course_ID"]  
-        # obj.collegeName=request["collegeName"]  
-        obj.subjectName=request["subjectName"]  
-        obj.courseName=request["courseName"]  
+        # obj.collegeName=request["collegeName"]
                
         return obj
 
@@ -176,7 +190,7 @@ class FacultyCtl(BaseCtl):
 
     # Template html of Role page    
     def get_template(self):
-        return "orsapi/Faculty.html"
+        return "orsapi/AddFaculty.html"          
 
     # Service of Role     
     def get_service(self):

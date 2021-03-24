@@ -53,7 +53,6 @@ Calls respective controller with id
 @csrf_exempt
 def actionId(request, page="", operation="", id=0):
     info(request, page, id)
-
     if request.session.get('user') is not None and page != "":
         ctlName = page + "Ctl()"
         ctlObj = eval(ctlName)

@@ -13,7 +13,6 @@ class CollegeCtl(BaseCtl):
 
     # Populate Form from HTTP Request
     def request_to_form(self, requestForm):
-
         self.form["id"] = requestForm["id"]
         self.form["collegeName"] = requestForm["collegeName"]
         self.form["collegeAddress"] = requestForm["collegeAddress"]
@@ -25,7 +24,6 @@ class CollegeCtl(BaseCtl):
     def model_to_form(self, obj):
         if (obj == None):
             return
-
         self.form["id"] = obj.id
         self.form["collegeName"] = obj.collegeName
         self.form["collegeAddress"] = obj.collegeAddress
@@ -90,7 +88,6 @@ class CollegeCtl(BaseCtl):
         # Display College page
 
     def display(self, request, params={}):
-
         if (params["id"] > 0):
             r = self.get_service().get(params["id"])
             self.model_to_form(r)

@@ -11,10 +11,8 @@ class EmailService:
 
         if (sendingMail == "changePassword"):
             text = EmailBuilder.change_password(user)
-
             email = EmailMessage(msg.subject, text, msg.frm, msg.to)
             email.content_subtype = "html"
-
             try:
                 res = email.send()
             except Exception as e:

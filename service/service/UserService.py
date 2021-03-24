@@ -26,7 +26,7 @@ class UserService(BaseService):
         sql = "select * from sos_user where 1=1"
         val = params.get("login_id", None)
         if DataValidator.isNotNull(val):
-            sql += " and login_id = '" + val + " ' "
+            sql += " and login_id = '" + val + "' "
         sql += " limit %s,%s"
         cursor = connection.cursor()
         cursor.execute(sql, [pageNo, self.pageSize])

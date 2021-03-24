@@ -11,7 +11,6 @@ It contains Role business logics.
 class CollegeService(BaseService):
 
     def search(self, params):
-
         pageNo = (params["pageNo"] - 1) * self.pageSize
         sql = "select * from sos_college where 1=1"
         val = params.get("collegeName", None)
@@ -28,6 +27,7 @@ class CollegeService(BaseService):
         count = 0
         for x in result:
             res["data"].append({columnName[i]: x[i] for i, _ in enumerate(x)})
+
         return res
 
     def get_model(self):

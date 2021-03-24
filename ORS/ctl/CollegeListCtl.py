@@ -18,7 +18,6 @@ class CollegeListCtl(BaseCtl):
         self.form["ids"] = requestForm.getlist("ids", None)
 
     def display(self, request, params={}):
-
         record = self.get_service().search(self.form)
         self.page_list = record["data"]
         res = render(request, self.get_template(), {"pageList": self.page_list, "form": self.form})
@@ -76,10 +75,8 @@ class CollegeListCtl(BaseCtl):
                         record = self.get_service().search(self.form)
                         self.page_list = record["data"]
                         self.form["pageNo"] = 1
-
                         self.form["error"] = False
                         self.form["message"] = "DATA IS SUCCESSFULLY DELETED"
-                        print("ppppppp-->", self.page_list)
                         return render(request, self.get_template(), {"pageList": self.page_list, "form": self.form})
                     else:
                         self.form["error"] = True

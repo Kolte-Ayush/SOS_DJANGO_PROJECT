@@ -52,25 +52,26 @@ class MarksheetCtl(BaseCtl):
         return JsonResponse({"data":res["data"]})
 
     def search(self,request, params = {}):
-        print("marksheet search is called")
         json_request=json.loads(request.body)
         if(json_request):
+            params["name"]=json_request.get("name",None)
             params["rollNumber"]=json_request.get("rollNumber",None)
-        service=MarksheetService()
+            params["pageNo"]=json_request.get("pageNo",None)
+     
+        service=MarksheetService()        
         c=service.search(params)
+       
         res={}
-        data=[]
-        for x in c:
-            data.append(x.to_json())
         if(c!=None):
-            res["data"]=data
+            res["data"]=c["data"]
             res["error"]=False
             res["message"]="Data is found"
         else:
             res["error"]=True
             res["message"]="record not found"
-        return JsonResponse({"data":res})
-
+        return JsonResponse({"result":res})
+       
+ 
     def form_to_model(self,obj,request):
         pk = int(request["id"])
         if(pk>0):
@@ -85,13 +86,13 @@ class MarksheetCtl(BaseCtl):
         return obj
 
     def save(self,request, params = {}):
-        print("orsapi college save is run")      
+            
         json_request=json.loads(request.body)
         self.request_to_form(json_request)
         res={}
         if(self.input_validation()):
             res["error"]=True
-            res["message"]=""
+            res["message"]=""               
         else:
             r=self.form_to_model(Marksheet(), json_request)
             service=MarksheetService()
@@ -100,7 +101,8 @@ class MarksheetCtl(BaseCtl):
             if(r!=None):
                 res["data"]=r.to_json()
                 res["error"]=False
-                res["message"]="Data is Successfully saved"    
+                res["message"]="Data is Successfully saved" 
+                    
         return JsonResponse({"data":res,'form':self.form})
 
     def input_validation(self):
@@ -114,13 +116,27 @@ class MarksheetCtl(BaseCtl):
             inputError["name"] = "name can not be null"
             self.form["error"] = True
 
-        if(DataValidator.isNull(self.form["physics"])):
+        if(DataValidator.ischeck(self.form["physics"])) :
+            inputError["physics"] = "Enter marks 1 to 100"
+            self.form["error"] = True     
+
+        if(DataValidator.isNull(self.form["physics"])) :
             inputError["physics"] = "physics marks can not be null"
             self.form["error"] = True
+          
+        if(DataValidator.ischeck(self.form["chemistry"])):
+            inputError["chemistry"] = "Enter marks 1 to 100" 
+            self.form["error"] = True   
+
 
         if(DataValidator.isNull(self.form["chemistry"])):
             inputError["chemistry"] = "chemistry marks can not be null"
             self.form["error"] = True
+
+        if(DataValidator.ischeck(self.form["maths"])):
+            inputError["maths"] = "Enter marks 1 to 100" 
+            self.form["error"] = True      
+        
         if(DataValidator.isNull(self.form["maths"])):
             inputError["maths"] = "maths marks can not be null"
             self.form["error"] = True

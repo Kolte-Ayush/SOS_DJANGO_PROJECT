@@ -17,10 +17,9 @@ import json
 class TimeTableCtl(BaseCtl): 
     
     def preload(self,request,params={}):
-        print("tt preload is run")
-        # self.data = CourseService().search(self.form)
-        courseList=CourseService().search(self.form)
-        subjectList = SubjectService().search(self.form)
+        
+        courseList=CourseService().preload(self.form)
+        subjectList = SubjectService().preload(self.form)
         coursedata=[]
         for x in courseList:
             coursedata.append(x.to_json())
@@ -30,7 +29,6 @@ class TimeTableCtl(BaseCtl):
         return JsonResponse({"subpreload":subpreload,"coursedata":coursedata})
 
     def get(self,request, params = {}):
-        print("tt get is run") 
         service=TimeTableService()
         c=service.get(params["id"])
         res={}
@@ -58,34 +56,61 @@ class TimeTableCtl(BaseCtl):
         return JsonResponse({"data":res["data"]})
 
     def search(self,request, params = {}):
-        print("tt search is found")
         json_request=json.loads(request.body)
+        courseList = CourseService().preload(self.form)
+        subject_List = SubjectService().preload(self.form)
         if(json_request):
             params["subjectName"]=json_request.get("subjectName",None)
-            params["semester"]=json_request.get("semester",None)    
-        service=TimeTableService()
+            params["semester"]=json_request.get("semester",None)
+            params["pageNo"]=json_request.get("pageNo",None)
+        service=TimeTableService()        
         c=service.search(params)
         res={}
-        data=[]
-        courseList=CourseService().search(self.form)
-        subject_List = SubjectService().search(self.form)
-        for x in self.page_list: 
-            for y in courseList:  
-                if x.course_ID==y.id:
-                    x.courseName=y.courseName 
-            for z in subject_List:               
-               if x.subject_ID==z.id:
-                   x.subjectName=z.subjectName
-            print("mk")       
-            data.append(x.to_json())
         if(c!=None):
-            res["data"]=data
+            for x in c['data']:
+                for y in courseList:
+                    if x.get("course_ID") == y.id:
+                        x['courseName'] = y.courseName
+                for z in subject_List:
+                    if x.get("subject_ID") == z.id:
+                        x['subjectName'] = z.subjectName
+            res["data"]=c["data"]
             res["error"]=False
             res["message"]="Data is found"
         else:
             res["error"]=True
             res["message"]="record not found"
-        return JsonResponse({"data":res})
+        return JsonResponse({"result":res})
+        # print("tt search is found------------->")
+        # json_request=json.loads(request.body)
+        # if(json_request):
+        #     params["subjectName"]=json_request.get("subjectName",None)
+        #     params["semester"]=json_request.get("semester",None)    
+        # service=TimeTableService()
+        # c=service.search(params)
+        # print(params," 1aaaaaaaaaaaaaaaa11111111111-->",c)
+
+        # res={}
+        # data=[]
+        # courseList=CourseService().search(self.form)
+        # subject_List = SubjectService().search(self.form)
+        # for x in c: 
+        #     for y in courseList:  
+        #         if x.course_ID==y.id:
+        #             x.courseName=y.courseName 
+        #     for z in subject_List:               
+        #        if x.subject_ID==z.id:
+        #            x.subjectName=z.subjectName
+        #     print("mk")       
+        #     data.append(x.to_json())
+        # if(c!=None):
+        #     res["data"]=data
+        #     res["error"]=False
+        #     res["message"]="Data is found"
+        # else:
+        #     res["error"]=True
+        #     res["message"]="record not found"
+        # return JsonResponse({"data":res})
 
     def form_to_model(self,obj,request):
         pk = int(request["id"])
@@ -117,7 +142,35 @@ class TimeTableCtl(BaseCtl):
 
     # Template html of Role page    
     def get_template(self):
-        return "orsapi/TimeTable.html"          
+        return "orsapi/TimeTable.html"  
+
+    def input_validation(self):
+        super().input_validation()
+        inputError =  self.form["inputError"]
+        if(DataValidator.isNull(self.form["examTime"])):
+            inputError["examTime"] = " examTime can not be null"
+            self.form["error"] = True
+
+        if(DataValidator.isNull(self.form["examDate"])):
+            inputError["examDate"] = "examDate can not be null"
+            self.form["error"] = True
+
+        if(DataValidator.isNull(self.form["subject_ID"])):
+            inputError["subject_ID"] = "subject_ID can not be null"
+            self.form["error"] = True
+
+        
+
+    #     if(DataValidator.isNull(self.form["course_ID"])):
+    #         inputError["course_ID"] = "course Name can not be null"
+    #         self.form["error"] = True
+
+       
+    #     if(DataValidator.isNull(self.form["semester"])):
+    #         inputError["semester"] = "semester can not be null"
+    #         self.form["error"] = True
+
+    #     return self.form["error"]         
 
     # Service of Role     
     def get_service(self):

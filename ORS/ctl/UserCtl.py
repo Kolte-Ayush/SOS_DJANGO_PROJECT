@@ -32,7 +32,6 @@ class UserCtl(BaseCtl):
 
     # Populate Form from Model
     def model_to_form(self, obj):
-
         if (obj == None):
             return
         self.form["id"] = obj.id
@@ -134,7 +133,6 @@ class UserCtl(BaseCtl):
         if (DataValidator.isNull(self.form["role_Id"])):
             inputError['role_Id'] = "Please Select Role"
             self.form['error'] = True
-
         return self.form["error"]
 
         # Display Role page

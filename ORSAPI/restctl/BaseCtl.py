@@ -18,13 +18,13 @@ class BaseCtl(ABC):
     '''
     def __init__(self):
         self.form = {}
+        self.form["pageNo"] = 1
         self.form["id"] = 0
         self.form["message"] = ""
         self.form["error"] = False
         self.form["inputError"] = {}
         self.form["data"] = {}
         self.form["sessionKey"] = ""
-        self.form["pageNo"] = 1
 
     '''
     It loads preload data of the page 

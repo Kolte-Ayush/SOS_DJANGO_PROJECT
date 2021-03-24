@@ -48,7 +48,7 @@ class BaseCtl(ABC):
             self.request_to_form(request.POST)
             if self.input_validation():
                 return render(request, self.get_template(), {"form": self.form, })
-                # "roleList":self.preloadData
+
             else:
                 if (request.POST.get("operation") == "Delete"):
                     return self.deleteRecord(request, params)
@@ -56,7 +56,6 @@ class BaseCtl(ABC):
                     return self.next(request, params)
                 elif (request.POST.get("operation") == "previous"):
                     return self.previous(request, params)
-
                 else:
                     return self.submit(request, params)
         else:

@@ -14,7 +14,7 @@ class FacultyService(BaseService):
         sql = "select * from sos_faculty where 1=1"
         val = params.get("email", None)
         if DataValidator.isNotNull(val):
-            sql += " and email = '" + val + " ' "
+            sql += " and email = '" + val + "' "
         sql += " limit %s,%s"
         cursor = connection.cursor()
 

@@ -1,7 +1,3 @@
-
-
-
-
 from django.http import HttpResponse
 from .BaseCtl import BaseCtl
 from django.shortcuts import render
@@ -10,23 +6,21 @@ from service.models import Student
 from service.forms import StudentForm
 from service.service.StudentService import StudentService
 from service.service.CollegeService import CollegeService 
-
-
 from django.http.response import JsonResponse
 import json
 
 
 class StudentCtl(BaseCtl): 
     def preload(self,request,params={}):
-        print("orsapi student preload is run")
-        self.data = CollegeService().search(self.form)
+        self.data = CollegeService().preload(self.form)
         preloadList=[]
         for x in self.data:
             preloadList.append(x.to_json())
+            preloadList
         return JsonResponse({"preloadList":preloadList})
         
     def get(self,request, params = {}):
-        print("orsapi student get is run")
+        
         service=StudentService()
         c=service.get(params["id"])
         res={}
@@ -55,29 +49,27 @@ class StudentCtl(BaseCtl):
         return JsonResponse({"data":res["data"]}) 
 
     def search(self,request, params = {}):
-        print("orsapi student search is run")
         json_request=json.loads(request.body)
         if(json_request):
-            params["collegeName"]=json_request.get("collegeName",None)       
-        service=StudentService()
+            params["firstName"]=json_request.get("firstName",None)
+            params["pageNo"]=json_request.get("pageNo",None)
+        service=StudentService()        
         c=service.search(params)
-        collegeList=CollegeService().search(self.form)            
         res={}
-        data=[]
-        for x in c:
-            for y in collegeList:
-                if x.college_ID==y.id:
-                    x.collegeName=y.collegeName
-                    print("ddddd----------->",x.collegeName)
-            data.append(x.to_json())
         if(c!=None):
-            res["data"]=data
+            collegeList = CollegeService().preload(self.form)
+            for x in c['data']:
+                for y in collegeList:
+                    if x.get("college_ID") == y.id:
+                        x["collegeName"] = y.collegeName
+            res["data"]=c["data"]
             res["error"]=False
             res["message"]="Data is found"
         else:
             res["error"]=True
             res["message"]="record not found"
-        return JsonResponse({"data":res})
+        return JsonResponse({"result":res})
+       
 
     def form_to_model(self,obj,request):
         print("orsapi student form to model is run")

@@ -14,7 +14,6 @@ import json
 class CollegeCtl(BaseCtl):
 
     def request_to_form(self, requestForm):
-        print("orsapi college request to form is run")
         self.form["id"] = requestForm["id"]
         self.form["collegeName"] = requestForm["collegeName"]
         self.form["collegeAddress"] = requestForm["collegeAddress"]
@@ -23,17 +22,12 @@ class CollegeCtl(BaseCtl):
         self.form["collegePhoneNumber"] = requestForm["collegePhoneNumber"]
 
     def get(self, request, params={}):
-        print("orsapi college get is run")
-        params['pageNo'] = 1
+
         service = CollegeService()
-        if params['id'] > 0:
-            c = service.get(params["id"])
-            c = c.to_json()
-        else:
-            c = service.search(params)
+        c = service.get(params["id"])
         res = {}
         if (c != None):
-            res["data"] = c
+            res["data"] = c.to_json()
             res["error"] = False
             res["message"] = "Data is found"
         else:
@@ -42,7 +36,6 @@ class CollegeCtl(BaseCtl):
         return JsonResponse({"data": res["data"]})
 
     def delete(self, request, params={}):
-        print("orsapi college delete is run")
         service = CollegeService()
         c = service.get(params["id"])
         res = {}
@@ -57,19 +50,15 @@ class CollegeCtl(BaseCtl):
         return JsonResponse({"data": res})
 
     def search(self, request, params={}):
-        params['pageNo'] = 1
-        print("orsapi college search is run")
         json_request = json.loads(request.body)
         if (json_request):
             params["collegeName"] = json_request.get("collegeName", None)
+            params["pageNo"] = json_request.get("pageNo", None)
         service = CollegeService()
         c = service.search(params)
         res = {}
-        data = []
-        for x in c:
-            data.append(c)
         if (c != None):
-            res["data"] = data
+            res["data"] = c["data"]
             res["error"] = False
             res["message"] = "Data is found"
         else:
@@ -90,7 +79,6 @@ class CollegeCtl(BaseCtl):
         return obj
 
     def save(self, request, params={}):
-        print("orsapi college save is run")
         json_request = json.loads(request.body)
         self.request_to_form(json_request)
         res = {}
@@ -101,7 +89,6 @@ class CollegeCtl(BaseCtl):
             r = self.form_to_model(College(), json_request)
             service = CollegeService()
             c = service.save(r)
-
             if (r != None):
                 res["data"] = r.to_json()
                 res["error"] = False
@@ -130,10 +117,17 @@ class CollegeCtl(BaseCtl):
             self.form["error"] = True
         return self.form["error"]
 
-    # Template html of Role page    
+    # Template html of Role page
     def get_template(self):
         return "orsapi/College.html"
 
-    # Service of Role
+        # Service of Role
+
     def get_service(self):
         return CollegeService()
+
+
+
+
+
+

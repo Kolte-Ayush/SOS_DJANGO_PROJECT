@@ -127,11 +127,11 @@ class Faculty(models.Model):
             "gender": self.gender,
             "dob": self.dob,
             "college_ID": self.college_ID,
-            "collegeName": self.collegeName,
+            # "collegeName": self.collegeName,
             "subject_ID": self.subject_ID,
-            "subjectName": self.subjectName,
+            # "subjectName": self.subjectName,
             "course_ID": self.course_ID,
-            "courseName": self.courseName
+            # "courseName": self.courseName
 
         }
         return data
@@ -181,7 +181,7 @@ class Student(models.Model):
             "mobileNumber": self.mobileNumber,
             "email": self.email,
             "college_ID": self.college_ID,
-             "collegeName": self.collegeName
+
         }
         return data
 
@@ -201,9 +201,8 @@ class Subject(models.Model):
             "id": self.id,
             "subjectName": self.subjectName,
             "subjectDescription": self.subjectDescription,
-
             "course_ID": self.course_ID,
-             "courseName": self.courseName
+
         }
         return data
 
@@ -215,9 +214,7 @@ class TimeTable(models.Model):
     examTime = models.CharField(max_length=40)
     examDate = models.DateField()
     subject_ID = models.IntegerField()
-    # subjectName = models.CharField(max_length=50)
     course_ID = models.IntegerField()
-    # courseName = models.CharField(max_length=50)
     semester = models.CharField(max_length=50)
 
     def to_json(self):
@@ -226,9 +223,9 @@ class TimeTable(models.Model):
             "examTime": self.examTime,
             "examDate": self.examDate,
             "subject_ID": self.subject_ID,
-             "subjectName": self.subjectName,
+
             "course_ID": self.course_ID,
-             "courseName": self.courseName,
+
             "semester": self.semester
         }
         return data

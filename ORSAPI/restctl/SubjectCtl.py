@@ -1,5 +1,5 @@
 
-
+ 
 
 from django.http import HttpResponse 
 from .BaseCtl import BaseCtl
@@ -15,7 +15,7 @@ from django.core import serializers
 
 class SubjectCtl(BaseCtl): 
     def preload(self,request,params={}):
-        self.data = CourseService().search(self.form)
+        self.data = CourseService().preload(self.form)
         preloadList=[]
         for x in self.data:
             preloadList.append(x.to_json())
@@ -58,26 +58,49 @@ class SubjectCtl(BaseCtl):
         json_request=json.loads(request.body)
         if(json_request):
             params["subjectName"]=json_request.get("subjectName",None)
-                        
-        service=SubjectService()
+            params["pageNo"]=json_request.get("pageNo",None)
+     
+        service=SubjectService()        
         c=service.search(params)
+       
         res={}
-        data=[]
-        courseList=CourseService().search(self.form)
-        for x in c:
-            for y in courseList:
-                if x.course_ID==y.id:
-                    x.courseName=y.courseName
-                    print("ddddd----------->",x.courseName)
-            data.append(x.to_json())
         if(c!=None):
-            res["data"]=data
+            courseList = CourseService().preload(self.form)
+            for x in c['data']:
+                for y in courseList:
+                    if x.get('course_ID') == y.id:
+                        x['courseName'] = y.courseName
+
+            res["data"]=c["data"]
             res["error"]=False
             res["message"]="Data is found"
         else:
             res["error"]=True
             res["message"]="record not found"
-        return JsonResponse({"data":res})
+        return JsonResponse({"result":res})
+        # json_request=json.loads(request.body)
+        # if(json_request):
+        #     params["subjectName"]=json_request.get("subjectName",None)
+                        
+        # service=SubjectService()
+        # c=service.search(params)
+        # res={}
+        # data=[]
+        # courseList=CourseService().search(self.form)
+        # for x in c:
+        #     for y in courseList:
+        #         if x.course_ID==y.id:
+        #             x.courseName=y.courseName
+        #             print("ddddd----------->",x.courseName)
+        #     data.append(x.to_json())
+        # if(c!=None):
+        #     res["data"]=data
+        #     res["error"]=False
+        #     res["message"]="Data is found"
+        # else:
+        #     res["error"]=True
+        #     res["message"]="record not found"
+        # return JsonResponse({"data":res})
 
     def form_to_model(self,obj,request):
         c = CourseService().get(self.form["course_ID"])
