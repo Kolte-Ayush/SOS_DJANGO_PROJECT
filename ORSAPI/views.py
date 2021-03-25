@@ -34,23 +34,7 @@ def info(request, page, action):
 @csrf_exempt
 def action(request, page, action="get", id=0):
     info(request, page, action)
-    # if request.session.session_key is not None and page != "":
+
     methodCall = page + "Ctl()." + action + "(request,{'id':id})"
     response = eval(methodCall)
     return response
-    # elif page == "Login":
-    #     methodCall = page + "Ctl()." + action + "(request,{'id':id})"
-    #     response = eval(methodCall)
-    #     return response
-    # elif page == "Forgetpassword":
-    #     methodCall = page + "Ctl()." + action + "(request,{'id':id})"
-    #     response = eval(methodCall)
-    #     return response
-    # elif page == "Registration":
-    #     methodCall = page + "Ctl()." + action + "(request,{'id':id})"
-    #     response = eval(methodCall)
-    #     return response
-    # else:
-    #     res = "Session Expired"
-    #     response = {"res": res}
-    #     return JsonResponse(response)
